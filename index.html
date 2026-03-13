@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>for gab 🌸</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+
+html,body{
+margin:0;
+padding:0;
+height:100%;
+overflow:hidden;
+font-family:'Quicksand',sans-serif;
+transition:background 1s ease;
+}
+
+/* TEXT */
+
+#container{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:80%;
+text-align:center;
+z-index:100;
+}
+
+#text{
+font-size:30px;
+line-height:1.4;
+opacity:0;
+transition:opacity .8s ease;
+}
+
+.show{opacity:1;}
+.hide{opacity:0;}
+
+/* bounce */
+
+.bounce{animation:bounce .8s;}
+
+@keyframes bounce{
+0%{transform:translateY(-20px)}
+50%{transform:translateY(0)}
+100%{transform:translateY(-8px)}
+}
+
+/* STAR + MUSIC (same animation now) */
+
+.star,.note{
+position:absolute;
+pointer-events:none;
+animation:floatUp 4s linear forwards;
+}
+
+.star{font-size:18px;}
+.note{font-size:22px;}
+
+@keyframes floatUp{
+0%{opacity:0; transform:translateY(20px) scale(.6)}
+40%{opacity:1}
+100%{opacity:0; transform:translateY(-120px) scale(1)}
+}
+
+/* FLOWER */
+
+.flower{
+position:absolute;
+pointer-events:none;
+animation:bloom .7s ease-out forwards;
+}
+
+@keyframes bloom{
+0%{transform:scale(0) rotate(-40deg); opacity:0}
+60%{opacity:1}
+100%{transform:scale(1) rotate(10deg); opacity:1}
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="container">
+<div id="text"></div>
+</div>
+
+<script>
+
+const slides=[
+{text:"hi gab",bg:"linear-gradient(135deg,#FFF6A8,#FFFBD6)",color:"#333",effect:"bounce"},
+{text:"i hope you are happy, always",bg:"linear-gradient(135deg,#F9C6D3,#FFDDE6)",color:"#222",effect:"stars"},
+{text:"i want you to know",bg:"linear-gradient(135deg,#BDE7FF,#E6F6FF)",color:"#222",effect:"typing"},
+{text:"you are my favorite song, the way you always on repeat in my head",bg:"linear-gradient(135deg,#E6C8FF,#F2E6FF)",color:"#222",effect:"notes"},
+{text:"i hope i can hand you this flower myself 🌸",bg:"linear-gradient(135deg,#CFF5D2,#E9FFE9)",color:"#222",effect:"flowers"}
+]
+
+let slideIndex=0
+let starInterval
+let noteInterval
+let typingInterval
+let flowers=[]
+
+const text=document.getElementById("text")
+
+function showSlide(i){
+
+const s=slides[i]
+
+document.body.style.background=s.bg
+text.style.color=s.color
+text.className=""
+text.innerHTML=""
+
+clearInterval(starInterval)
+clearInterval(noteInterval)
+clearInterval(typingInterval)
+
+/* typing effect */
+
+if(s.effect==="typing"){
+
+let n=0
+
+typingInterval=setInterval(()=>{
+text.innerHTML+=s.text[n]
+n++
+
+if(n===1) text.classList.add("show")
+
+if(n>=s.text.length) clearInterval(typingInterval)
+
+},40)
+
+}else{
+
+text.innerHTML=s.text
+setTimeout(()=>text.classList.add("show"),50)
+
+}
+
+if(s.effect==="bounce") text.classList.add("bounce")
+
+if(s.effect==="stars") startStars()
+
+if(s.effect==="notes") startNotes()
+
+if(s.effect==="flowers") flowerBurst()
+
+}
+
+/* stars */
+
+function startStars(){
+
+starInterval=setInterval(()=>{
+
+const star=document.createElement("div")
+star.className="star"
+star.innerHTML="⭐"
+
+star.style.left=Math.random()*window.innerWidth+"px"
+star.style.top=Math.random()*window.innerHeight+"px"
+
+document.body.appendChild(star)
+
+setTimeout(()=>star.remove(),4000)
+
+},220)
+
+}
+
+/* music notes (same float animation as stars) */
+
+function startNotes(){
+
+noteInterval=setInterval(()=>{
+
+const n=document.createElement("div")
+n.className="note"
+n.innerHTML="🎵"
+
+n.style.left=Math.random()*window.innerWidth+"px"
+n.style.top=Math.random()*window.innerHeight+"px"
+
+document.body.appendChild(n)
+
+setTimeout(()=>n.remove(),4000)
+
+},240)
+
+}
+
+/* BIGGER FLOWER CELEBRATION */
+
+function flowerBurst(){
+
+for(let i=0;i<60;i++){
+
+setTimeout(()=>{
+
+const f=document.createElement("div")
+f.className="flower"
+f.innerHTML="🌸"
+
+const size=24+Math.random()*24
+
+f.style.fontSize=size+"px"
+f.style.left=Math.random()*window.innerWidth+"px"
+f.style.top=Math.random()*window.innerHeight+"px"
+
+document.body.appendChild(f)
+
+setTimeout(()=>f.remove(),2000)
+
+},i*30)
+
+}
+
+}
+
+/* click */
+
+document.body.addEventListener("click",(e)=>{
+
+if(slideIndex>=slides.length){
+
+const f=document.createElement("div")
+f.className="flower"
+f.innerHTML="🌸"
+
+f.style.left=e.clientX+"px"
+f.style.top=e.clientY+"px"
+
+document.body.appendChild(f)
+flowers.push(f)
+
+return
+
+}
+
+text.classList.remove("show")
+text.classList.add("hide")
+
+setTimeout(()=>{
+slideIndex++
+showSlide(slideIndex)
+},600)
+
+})
+
+/* hold to clear flowers */
+
+let holdTimer
+
+function clearFlowers(){
+
+flowers.forEach(f=>{
+f.style.opacity=0
+setTimeout(()=>f.remove(),500)
+})
+
+flowers=[]
+
+}
+
+document.body.addEventListener("mousedown",()=>{
+holdTimer=setTimeout(clearFlowers,800)
+})
+
+document.body.addEventListener("mouseup",()=>{
+clearTimeout(holdTimer)
+})
+
+document.body.addEventListener("touchstart",()=>{
+holdTimer=setTimeout(clearFlowers,800)
+})
+
+document.body.addEventListener("touchend",()=>{
+clearTimeout(holdTimer)
+})
+
+showSlide(0)
+
+</script>
+
+</body>
+</html>
