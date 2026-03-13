@@ -26,24 +26,33 @@ position:absolute;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
-width:80%;
+width:85%;
 text-align:center;
-z-index:100;
+z-index:9999; /* always above animations */
 }
 
 #text{
-font-size:30px;
+font-size:34px;
 line-height:1.4;
-opacity:1;
+color:#222;
+opacity:0.85;
 transition:opacity .8s ease;
+position:relative;
 }
 
-.show{opacity:1;}
-.hide{opacity:0;}
+.show{
+opacity:1;
+}
+
+.hide{
+opacity:0;
+}
 
 /* bounce */
 
-.bounce{animation:bounce .8s;}
+.bounce{
+animation:bounce .8s;
+}
 
 @keyframes bounce{
 0%{transform:translateY(-20px)}
@@ -51,12 +60,13 @@ transition:opacity .8s ease;
 100%{transform:translateY(-8px)}
 }
 
-/* STAR + MUSIC (same animation now) */
+/* STAR + MUSIC */
 
 .star,.note{
 position:absolute;
 pointer-events:none;
 animation:floatUp 4s linear forwards;
+z-index:1;
 }
 
 .star{font-size:18px;}
@@ -74,6 +84,7 @@ animation:floatUp 4s linear forwards;
 position:absolute;
 pointer-events:none;
 animation:bloom .7s ease-out forwards;
+z-index:2;
 }
 
 @keyframes bloom{
@@ -98,7 +109,7 @@ const slides=[
 {text:"i hope you are happy, always",bg:"linear-gradient(135deg,#F9C6D3,#FFDDE6)",color:"#222",effect:"stars"},
 {text:"i want you to know",bg:"linear-gradient(135deg,#BDE7FF,#E6F6FF)",color:"#222",effect:"typing"},
 {text:"you are my favorite song, the way you always on repeat in my head",bg:"linear-gradient(135deg,#E6C8FF,#F2E6FF)",color:"#222",effect:"notes"},
-{text:"i hope i can hand you this flower myself 🌸",bg:"linear-gradient(135deg,#CFF5D2,#E9FFE9)",color:"#222",effect:"flowers"}
+{text:"i hope i can hand you this flower myself :)",bg:"linear-gradient(135deg,#CFF5D2,#E9FFE9)",color:"#222",effect:"flowers"}
 ]
 
 let slideIndex=0
@@ -122,26 +133,31 @@ clearInterval(starInterval)
 clearInterval(noteInterval)
 clearInterval(typingInterval)
 
-/* typing effect */
+/* typing */
 
 if(s.effect==="typing"){
 
 let n=0
 
 typingInterval=setInterval(()=>{
+
 text.innerHTML+=s.text[n]
 n++
 
-if(n===1) text.classList.add("show")
+if(n===1){
+text.classList.add("show")
+}
 
-if(n>=s.text.length) clearInterval(typingInterval)
+if(n>=s.text.length){
+clearInterval(typingInterval)
+}
 
 },40)
 
 }else{
 
 text.innerHTML=s.text
-setTimeout(()=>text.classList.add("show"),50)
+text.classList.add("show")
 
 }
 
@@ -176,7 +192,7 @@ setTimeout(()=>star.remove(),4000)
 
 }
 
-/* music notes (same float animation as stars) */
+/* notes */
 
 function startNotes(){
 
@@ -197,11 +213,11 @@ setTimeout(()=>n.remove(),4000)
 
 }
 
-/* BIGGER FLOWER CELEBRATION */
+/* flower celebration */
 
 function flowerBurst(){
 
-for(let i=0;i<60;i++){
+for(let i=0;i<70;i++){
 
 setTimeout(()=>{
 
@@ -209,7 +225,7 @@ const f=document.createElement("div")
 f.className="flower"
 f.innerHTML="🌸"
 
-const size=24+Math.random()*24
+const size=30+Math.random()*40
 
 f.style.fontSize=size+"px"
 f.style.left=Math.random()*window.innerWidth+"px"
@@ -217,9 +233,9 @@ f.style.top=Math.random()*window.innerHeight+"px"
 
 document.body.appendChild(f)
 
-setTimeout(()=>f.remove(),2000)
+setTimeout(()=>f.remove(),2200)
 
-},i*30)
+},i*25)
 
 }
 
@@ -235,6 +251,11 @@ const f=document.createElement("div")
 f.className="flower"
 f.innerHTML="🌸"
 
+/* BIGGER CONTINUOUS FLOWERS */
+
+const size= 35+Math.random()*50
+
+f.style.fontSize=size+"px"
 f.style.left=e.clientX+"px"
 f.style.top=e.clientY+"px"
 
